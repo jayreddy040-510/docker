@@ -1,7 +1,7 @@
 # docker + docker-compose
 > a no-frills introduction to containers and container technology by J
 
-### Overview
+## Overview
 1. Who is J?
 2. What are containers and why should you care?
 3. How to implement containerization in your next project
@@ -9,7 +9,7 @@
 5. Common docker/docker-compose commands
 6. Demo
 
-### Who is J?
+## Who is J?
 i am! next question. haha, only kidding.
 
 *ahem*
@@ -27,7 +27,7 @@ the way over to you!
 
 now, let's talk containers so you can resume.skills.push("docker", "docker-compose")
 
-### What are containers and why should you care?
+## What are containers and why should you care?
 containers are *virtual* bundles that wrap your application and all of its
 dependencies together into a standardized unit for software development. this
 process ensures that your app runs consistently across various environments.
@@ -44,8 +44,8 @@ couldn't run your project.
 
 any number of things could have gone wrong: was there a dependency clash btwn
 the engineer's local environment and yours? were the ports that you deployed
-your services to already occupied on their machine? was he running 128 browser
-tabs and he didn't have sufficient memory to run your app? WHAT HAPPENED?!
+your services to already occupied on their machine? were they running 128 browser
+tabs and they didn't have sufficient memory to run your app? WHAT HAPPENED?!
 
 containerization is a solution to the above problem. thanks to virtualization,
 the container allows for *process-isolation* meaning that to your app inside
@@ -62,7 +62,8 @@ you can send it in with your take-home project) and *lightweight* so the overhea
 of virtualization doesn't affect your app's performance. containers are often
 preferred to VM's because the software to manage them is comparatively lightweight
 and portable - this is partly due to the fact that containers share their host
-machine's OS kernal whereas a VM will spin up a completely new OS instance.
+machine's OS kernel whereas a VM will spin up a completely new OS instance and
+virtualize the entire hardware stack: CPU, memory, disk, network interface, etc..
 
 docker is a lightweight, portable containerization solution and the industry standard
 when it comes to using containers. many software products that are developed enough
@@ -80,6 +81,32 @@ that define the microservice architecture.
 
 don't let the hat person's criticism deter you! the modern engineer spends
 just as much time making sure independent services are "glue(d) together" well
-as they do writing code.
+as they do writing code and that is more a reflection on modern software infra
+than our leet hax0r skillzzz :P; and, you having familiarity with glueing(sp?)
+software together will advantage you in the job battlefield!
 
-### How to implement containerization in your next project
+## How to implement containerization in your next project
+
+[first off, we gotta install docker](https://docs.docker.com/get-docker/)
+
+once you've successfully installed docker (and docker-compose - it comes with
+every Docker Desktop bundle) check to make sure you've successfully downloaded
+the two binaries with:
+
+``` docker --version```
+
+``` docker-compose --version```
+
+the version won't matter too much for the purpose of this exercise but generally
+you'd want your docker version to be >= 20.\*.\* and your docker-compose version
+to be >= 2.\*.\*
+
+and last thing before we get into writing our Dockerfile, docker itself has a great[
+'getting started' tutorial](https://docs.docker.com/get-started/) that you should
+check out. it's quick and dirty if you want to just containerize an app and be done
+with it. i would say this tutorial that you're reading now aims to go "one level deeper"
+so that you feel comfortable understanding the engineering decision-making around docker
+and can discuss it in an interview setting as well as implement it in a project while
+the docker 'getting started' tutorial wants to quickly get you on the ground running and
+using docker.
+
