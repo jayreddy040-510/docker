@@ -1,14 +1,16 @@
 version: '3'
 services:
   react_app:
+    container_name: react_app
     build:
       context: ./react_app
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
   flask_app:
+    container_name: flask_app
     build:
       context: ./flask_app
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5001:5000"
