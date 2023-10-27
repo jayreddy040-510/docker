@@ -338,3 +338,278 @@ to a code error for example, the container wouldn't show without the '-a' flag.
 
     e.g. ![docker ps -a output](./img/docker_ps.png)
 
+6. ```docker exec``` - another useful command to run commands inside of your container.
+
+    e.g. ```docker exec -it [container_name] bash``` - opens up a bash shell prompt
+    inside of your container in case, say, you want to run a data cleaning and
+    collecting script. the '-it' flags are just what i use at work, lol, but
+    play around and see what works for you!
+
+---
+
+### Break and Summary Time!
+if you're going through this async, good for you! take a break and come back when
+    you're feeling refreshed and try to skim over what we've covered so far.
+
+here are some foundational q's to think about:
+
+1. what's a container and what're 1-2 advantages it provides?
+2. how are the following related: registry? image? container?
+3. how do i use a Dockerfile? what is it helping me build? (dont worry about syntax!)
+4. refresh yourself on the more important docker image/container commands:
+    - ```docker build```
+    - ```docker run```
+    - ```docker ps -a```
+    - ```docker exec -it bash```
+
+---
+
+## How to easily manage containers (Intro to docker-compose)
+
+in the world of microservices, large companies will not only deploy 100s
+of microservices, each wrapped neatly in its own container; but, they'll also deploy
+multiples of each microservice to provide for systemic redundancies in case of failure!
+
+the concept of managing, scaling, checking metrics, organizing deployments, and understanding
+general health of your container ecosystem all fit under the idea of "container
+orchestration."
+
+__\*docker-compose is not that\*__
+
+most companies will use a tool many of you will have either seen in job applications
+or heard of personally: Kubernetes (K8s) for all of their container orchestration needs.
+
+docker-compose operates on a smaller scale than that. a scale that is much more imp
+to individual developers or smaller companies.
+
+the value proposition is:
+
+*are you running a container ecosystem with a handful of
+containers? rather than docker build/run each one individually do you wish you could
+just deploy them all at once? how about removing them all at once in case a horrible bug
+is reaching your end-users? do you need some sort of minimal, network support within your
+container ecosystem so that your containers can communicate with each other?*
+
+enter docker-compose
+
+similar to the Dockerfile we made earlier, docker-compose.yml (the docker-compose
+instruction file) sits at the root level of your project at the same level as your
+various service subdirectories, like this example project directory shape:
+
+- `project_root/`
+  - `react_app/`
+  - `redis/`
+  - `nginx/`
+  - `flask_backend/`
+  - `docker-compose.yml`
+
+inside of the docker-compose.yml file you will name various services, direct docker-compose
+to the corresponding Dockerfile for that service (usually sitting at the top level of the
+service), and specify various parameters for your container ecosystem like port forwarding,
+environment variables each container is allowed to have access to, whether you want to
+virtually mount data from host to container as a volume to reflect instant changes within
+the container.
+
+as you use docker-compose and docker more you will learn about different functionalities
+and how they can help make your project workflow more convenient but for now lets
+learn about docker-compose in the context of the primary value proposition of
+containerization: portable, lightweight, easy deployments.
+
+---
+let's look at an example docker-compose.yml file, and analyze it line by line
+
+this might be an example docker-compose.yml file for a project with the following
+shape:
+
+
+- `project_root/`
+  - `react_app/`
+  - `flask_app/`
+  - `docker-compose.yml`
+
+```yaml
+version: '3'
+
+services:
+  react_app:
+    build:
+      context: ./react_app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./react_app:/app
+    depends_on:
+      - flask_app
+
+  flask_app:
+    build:
+      context: ./flask_app
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./flask_app:/app
+    expose:
+      - "5000"
+```
+
+line by line:
+
+```yaml
+version: '3'
+```
+1. ```yaml
+    version: '3'
+    ```
+    self-explanatory :D
+
+---
+
+```yaml
+services:
+```
+2. ```yaml
+    services:
+    ```
+    docker-compose primarily functions to manage multiple containers as a singular unit,
+    so under the `services` directive is where you'd define each of these individual containers
+    (or services). each service defined would become its own container when the `docker-compose
+    up` command is run.
+
+---
+
+```yaml
+  react_app:
+```
+3. ```yaml
+    react_app:
+    ```
+    here, we're defining a service named `react_app`, which will represent our
+    frontend app's container. everything nested under this service name will apply
+    specifically to this container.
+
+---
+
+```yaml
+    build:
+      context: ./react_app
+      dockerfile: Dockerfile
+```
+4. ```yaml
+    build:
+      context: ./react_app
+      dockerfile: Dockerfile
+    ```
+    the `build` directive indicates we're building an image from a Dockerfile rather
+    than using a pre-built image. the `context` specifies the directory containing files
+    needed during the build (like your source code). it's pointing to `./react_app`, meaning
+    there should be a folder named `react_app` in the same directory as this `docker-compose.yml`.
+    the `dockerfile` field is used to specify the name and location of the Dockerfile, which in
+    this case, is assumed to be named 'Dockerfile' and is in the `react_app` directory.
+
+---
+
+```yaml
+    container_name: react_app
+```
+5. ```yaml
+    container_name: react_app
+    ```
+    the `container_name` directive lets you give a specific name to your container.
+    so, when you start up this service, instead of getting a generated default name,
+    your container will be named 'react_app'.
+
+---
+
+```yaml
+    ports:
+      - "3000:3000"
+```
+6. ```yaml
+    ports:
+      - "3000:3000"
+    ```
+    the `ports` directive is used to map ports between the host machine (your computer)
+    and the container. the format is `hostPort:containerPort`. in this case, we're saying
+    that port 3000 on the host should map to port 3000 on the container.
+
+---
+
+```yaml
+    volumes:
+      - ./react_app:/app
+```
+7. ```yaml
+    volumes:
+      - ./react_app:/app
+    ```
+    the `volumes` directive is for mounting directories (or files) from the host
+    into the container. in this example, the host's `./react_app` directory (where
+    all your React code presumably is) is mounted to the `/app` directory inside the
+    container. this is especially useful during development to reflect changes made
+    on the host instantly inside the container.
+
+---
+
+```yaml
+    depends_on:
+      - flask_app
+```
+8. ```yaml
+    depends_on:
+      - flask_app
+    ```
+    the `depends_on` directive indicates service dependencies. it's saying the `react_app`
+    service should only start after the `flask_app` service is started. helps to
+    ensure that our backend is up and running before the frontend kicks in.
+
+---
+
+### docker-compose commands
+
+there are many commands to use in the docker-compose ecosystem but i mostly use 3
+in my workflow: up, down, and logs
+
+1. ```docker-compose up``` - enter this cmd at the same level as your docker-compose.yml
+file. boots up your container system. if it's already running, checks for changed code
+and reboots the system utilizing cache. pass the '--build' flag to ensure images are
+built/rebuilt before upping the containers and the '-d' flag to run in detached mode
+as a background process.
+
+    e.g. ```docker-compose up --build -d```
+
+2. ```docker-compose down``` - downs your docker system, does not remove containers nor
+images.
+
+    e.g. ```docker-compose down```
+
+3. ```docker-compose logs``` - views output from your containers, pass '-f' flag
+to view the logs in follow mode which means logs get streamed to your terminal.
+
+    e.g. ```docker-compose logs -f```
+
+---
+
+## Demo
+
+check out the project directory in this git repo play with a simple docker-compose project,
+see if you can trace the directives and see what is going where!
+
+(will upload this after lecture)
+
+---
+
+## Additional Resources
+
+1. [Byte Byte Go - Diff between VM and container](https://blog.bytebytego.com/p/what-are-the-differences-between)
+2. [Programming with Mosh - Intro to Docker](https://www.youtube.com/watch?v=pTFZFxd4hOI&t=1229s&ab_channel=ProgrammingwithMosh)
+3. [beginner friendly docker curriculum](https://docker-curriculum.com/)
+4. [docker get started guide](https://docs.docker.com/get-started/)
+
+---
+
+## Thank You's
+
+thanks as always to my loving family and friends, my A/a instructors: Darren,
+Diego, Taylor, and Disnee, and to the learning programming ecosystem for always providing!
