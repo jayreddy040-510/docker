@@ -135,7 +135,7 @@ so, in order to containerize our application, we need to *build* an image that t
 the docker software the recipe for our containerized app. but J, how are we going to
 specify basic things like what OS to run our app in and using what language/version
 e.g. (Ubuntu 20.0.4, python3.8)? great question, anon! this is where the idea of a *registry* comes in.
-registries are storage for docker *images*. the most common public registry is 
+registries are storage for docker *images*. the most common public registry is
 [Docker Hub](https://hub.docker.com/search?q=) and here there are countless docker images
 for us to download via docker, add our application to, and then use to make a container.
 you may quickly notice that many of the popular images have more than 1 billion downloads.
@@ -244,14 +244,19 @@ okay, so, line by line:
     why we COPY in two separate phases is to optimize for build time. by first copying
     and installing dependencies, which tend to change less frequently than app code,
     we can ensure that docker only re-runs the 'npm install' step when there's an actual
-    change in dependencies - leading to faster subsequent builds. 
+    change in dependencies - leading to faster subsequent builds.
+
 6. ```Dockerfile
     EXPOSE 3000
     ```
     the EXPOSE directive indicates that the image is listening on the network port
     that you pass into it at runtime. it is more informational and isn't strictly
-    necessary, good for documentation. it signals to other devs that the application
-    inside the container is using port 3000.
+    necessary but is common practice and  good for documentation. it signals to
+    other devs that the application inside the container is using port 3000.
+
 7. ```Dockerfile
     CMD ["npm", "start"]
     ```
+    the CMD directive instantiates the container from the child/derived image after
+    it is built during the build phase. it is used to start a service or application
+    as you see here! pretty straightforward :)
