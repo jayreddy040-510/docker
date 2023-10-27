@@ -5,11 +5,11 @@
 1. Who is J?
 2. What are containers and why should you care about them?
 3. How to implement containerization in your next project
-5. How to easily manage containers (Intro to docker-compose)
-5. Common docker/docker-compose commands
-6. Demo
-7. Additional Resources
-8. Thank You's
+4. How to easily manage containers (Intro to docker-compose)
+5. Demo
+6. Additional Resources
+7. Thank You's
+
 ## Who is J?
 i am! next question. haha, only kidding.
 
@@ -88,7 +88,6 @@ than our leet hax0r skillzzz :P; and, you having familiarity with glueing(sp?)
 software together will advantage you in the job battlefield!
 
 ## How to implement containerization in your next project
-
 [first off, we gotta install docker](https://docs.docker.com/get-docker/)
 
 once you've successfully installed docker (and docker-compose - it comes with
@@ -128,8 +127,10 @@ a container which will be a virtual package of software as we touched on earlier
 so, a container is actually a *runtime instance* of an image. the image is the set of
 instructions on how to build the container with all of the specifications, like comparing
 a recipe to a dish: the image is the recipe and the container is an instance of a recipe
-\- a dish. another comparison for the OOP-infatuatedprogrammers among us, an image
-is very much likea class, whereas a container is like an instance of that class.
+\- a dish. another comparison for the OOP-infatuated programmers among us, an image
+is very much like a class, whereas a container is like an instance of that class.
+a class definition in itself doesn't *do* anything; and, you cannot have an instance
+of a class without a class definition.
 
 so, in order to containerize our application, we need to *build* an image that tells
 the docker software the recipe for our containerized app. but J, how are we going to
@@ -160,6 +161,8 @@ okay, so basic workflow so far (pseudocode):
 
 you might be thinking, wow we're going to do all that in a Dockerfile? that's a lot.
 and you're right - it is a lot! but, thankfully docker makes it a very approachable process.
+
+---
 
 alright, example time - let's imagine you have a react app with a project structure
 with the following shape:
@@ -200,7 +203,7 @@ okay, so, line by line:
 1. ```Dockerfile
     FROM node:20-alpine3.18
     ```
-    this line is pulling down a node base image running on a distribution
+    this line is pulling down a node.js base image running on a distribution
     of Linux known as alpine. alpine is commonly used as part of a base image
     because it is considerably smaller/minimalistic and designed with security in
     mind. the FROM directive is pulling this image from Docker Hub - see [here](
@@ -260,3 +263,78 @@ okay, so, line by line:
     the CMD directive instantiates the container from the child/derived image after
     it is built during the build phase. it is used to start a service or application
     as you see here! pretty straightforward :)
+
+ ---
+
+alllllrighty! so, we have all the code needed now to appropriately containerize our application.
+during the walkthrough of the Dockerfile you may have noticed i used the term "build phase,"
+you don't have to worry about explicitly setting a build phase or anything like that - it's just
+a general statement based on what's happening at that point in the Dockerfile. while your image
+is being built you're technically in the build phase.
+
+now, how do we turn this thing on?
+
+docker provides several commands to manipulate images and containers - we're almost there!
+
+---
+
+### docker image commands
+1. ```docker pull``` - this command is used to pull a base image from a registry to your
+local. for our scope it isn't all that necessary as the next command will both
+pull the base image from the registry and build your child/derived image from it, caching
+both. however, it has utility in CI/CD environments where huge apps are building 100s of
+containers from the same base image or if you don't need to change the base image at all,
+you would just pull it without needing to make a Dockerfile.
+
+    e.g. ```docker pull nginx:latest``` will pull the latest version of the nginx image
+
+2. ```docker build``` - this is your gluten-free bread and vegan butter command for
+most use cases you'll encounter when building a docker image. this command reads the
+instructions in your Dockerfile and builds your final image. use it in the dir of your
+Dockerfile or specify a path. pass the '-t' flag to give your image a tag which you can
+then refer to when instantiating a container from your docker image.
+
+    e.g. ```docker build -t j-react-app:1.0``` builds an image from my Dockerfile
+    in the current directory with the tag 'j-react-app:1.0'
+
+3. ```docker images``` - lists out all of the images on your local machine. useful
+if you want to clear up some space on disk. you can then use ```docker rmi
+[image_id]/[image_tag]``` if you want to remove an image.
+
+    e.g. ![docker images output](./img/docker_images.png)
+
+4. ```docker rmi``` - removes an image from your local machine, you can use either
+image ID or tag to specify which image.
+
+5. ```docker push``` - you probably won't have a need for this at this stage in your
+programming journey but this allows you to push docker images to whatever registry
+as long as your logged in with appropriate credentials - think like git push when it
+pushes to a remote branch.
+---
+### docker container commands
+1. ```docker run``` - creates and starts a container from a docker image. bread and
+butter for starting up a new container from an image.
+
+    e.g. ```docker run -d -p 3000:3000 j-react-app:1.0``` - the '-d' flag signifies
+    detached mode meaning the container is running as a background process in your
+    terminal. the '-p' flag sets up port forwarding from host machine (your local)
+    to the container's port. so ```docker run -p 8080:80 banana-tag``` would direct
+    all incoming traffic from port 8080 on your local machine to port 80 in the
+    container.
+
+2. ```docker start``` / ```docker stop``` - starts/stops container respectively
+without removing it. think of like a pause/unpause button.
+
+3. ```docker kill``` - forcefully exits a container. use case is when your container
+is frozen or not responding.
+
+4. ```docker rm``` - removes a stopped container from your local machine. you can
+pass the '-f' flag to forcefully remove a currently running container.
+
+5. ```docker ps``` - useful command! lists out all of your *currently running*
+containers on your machine. very commonly used with the '-a' flag which shows both
+running and non-running containers (in case your container didn't instantiate due
+to a code error for example, the container wouldn't show without the '-a' flag.
+
+    e.g. ![docker ps -a output](./img/docker_ps.png)
+
