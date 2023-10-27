@@ -5,7 +5,7 @@
 1. Who is J?
 2. What are containers and why should you care?
 3. How to implement containerization in your next project
-4. How to easily manage containers (Intro to docker-compose)
+5. How to easily manage containers (Intro to docker-compose)
 5. Common docker/docker-compose commands
 6. Demo
 
@@ -68,3 +68,18 @@ docker is a lightweight, portable containerization solution and the industry sta
 when it comes to using containers. many software products that are developed enough
 to reach consumers are using docker. and so, it'll serve you well to learn how to
 build and coordinate multiple containers at once.
+
+lastly, while some companies are considering the comparative financial implications
+btwn microservice vs. monolithic architecture, microservices continue to dominate
+the industry. and where do microservices thrive? in docker containers. each microservice
+is typically encapsulated in its own container, providing the isolation and independence
+that define the microservice architecture.
+
+*xkcd on microservices/docker:*
+![xkcd on containers](./img/xkcd_containers.png)
+
+don't let the hat person's criticism deter you! the modern engineer spends
+just as much time making sure independent services are "glue(d) together" well
+as they do writing code.
+
+### How to implement containerization in your next project
