@@ -21,9 +21,9 @@ teacher and later a medical school student. feel free to connect with me on
 twitter/X [@J_SON_Reddy](https://twitter.com/J_SON_Reddy) or
 [LinkedIn](https://www.linkedin.com/in/jay-reddy-69538b240/) and i'm happy to
 share my story and hear yours. lots of people helped me on this journey and
-i am but a singular node in a long linked list of pay it fwd - cascading all
-the way down to you!
+i am but a singular node in a long linked list of pay it fwd - node.next'ing all
+the way over to you!
 
-now, let's talk containers.
+now, let's talk containers so you can resume.skills.push("docker", "docker-compose")
 
 ### What are containers and why should you care?
